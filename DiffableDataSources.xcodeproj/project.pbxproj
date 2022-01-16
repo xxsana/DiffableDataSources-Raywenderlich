@@ -12,6 +12,7 @@
 		185CB1FE23C78CE6009F7571 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185CB1FD23C78CE6009F7571 /* SceneDelegate.swift */; };
 		185CB20523C78CE8009F7571 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 185CB20423C78CE8009F7571 /* Assets.xcassets */; };
 		49F0891127946D3D00B46463 /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F0891027946D3D00B46463 /* Section.swift */; };
+		49F0891427946F8400B46463 /* SectionHeaderReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49F0891327946F8400B46463 /* SectionHeaderReusableView.swift */; };
 		B09EE66F23DFE0E1006CEDE0 /* VideosViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09EE66E23DFE0E1006CEDE0 /* VideosViewController.swift */; };
 		B09EE67323DFE6C2006CEDE0 /* Video.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09EE67223DFE6C2006CEDE0 /* Video.swift */; };
 		B09EE67523DFE6D9006CEDE0 /* VideoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09EE67423DFE6D9006CEDE0 /* VideoCollectionViewCell.swift */; };
@@ -26,6 +27,7 @@
 		185CB1FD23C78CE6009F7571 /* SceneDelegate.swift */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; tabWidth = 2; };
 		185CB20423C78CE8009F7571 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		49F0891027946D3D00B46463 /* Section.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
+		49F0891327946F8400B46463 /* SectionHeaderReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionHeaderReusableView.swift; sourceTree = "<group>"; };
 		B056BCDA23EF434B00FEB67C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B09EE66E23DFE0E1006CEDE0 /* VideosViewController.swift */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = VideosViewController.swift; sourceTree = "<group>"; tabWidth = 2; };
 		B09EE67223DFE6C2006CEDE0 /* Video.swift */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = Video.swift; sourceTree = "<group>"; tabWidth = 2; };
@@ -77,6 +79,7 @@
 				B09EE67223DFE6C2006CEDE0 /* Video.swift */,
 				B0F557EB23EF455600314EC5 /* UIView+IBInspectable.swift */,
 				49F0891027946D3D00B46463 /* Section.swift */,
+				49F0891327946F8400B46463 /* SectionHeaderReusableView.swift */,
 			);
 			path = DiffableDataSources;
 			sourceTree = "<group>";
@@ -158,6 +161,7 @@
 				49F0891127946D3D00B46463 /* Section.swift in Sources */,
 				185CB1FC23C78CE6009F7571 /* AppDelegate.swift in Sources */,
 				185CB1FE23C78CE6009F7571 /* SceneDelegate.swift in Sources */,
+				49F0891427946F8400B46463 /* SectionHeaderReusableView.swift in Sources */,
 				B09EE67323DFE6C2006CEDE0 /* Video.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

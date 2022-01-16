@@ -34,7 +34,7 @@ class VideosViewController: UICollectionViewController {
   // must mark it lazy because Swift requires VideosVC to complete initialization
   // before you can call makeDataSource()
   private lazy var dataSource = makeDataSource()
-  private var videoList = Video.allVideos
+  private var sections = Section.allSections
   
 //  enum Section {
 //    case main
@@ -69,16 +69,41 @@ class VideosViewController: UICollectionViewController {
       cell?.video = video
       return cell
     }
+    
+    // Get an instance of the section for the supplementary view
+    dataSource.supplementaryViewProvider = { collectionView, kind, indexPath in
+      
+      // Ensure the supplementary view provider asks for a header
+      guard kind == UICollectionView.elementKindSectionHeader else {
+        return nil
+      }
+      
+      // Dequeue a new header view
+      let view = collectionView.dequeueReusableSupplementaryView(
+        ofKind: kind,
+        withReuseIdentifier: SectionHeaderReusableView.reuseIdentifier,
+        for: indexPath) as? SectionHeaderReusableView
+      
+      // Retrive the section from the data source, then set the titlelabel
+      let section = self.dataSource.snapshot().sectionIdentifiers[indexPath.section]
+      view?.titleLabel.text = section.title
+      return view
+    }
+    
     return dataSource
   }
   
   // Apply a snapshot to the datasource
   func applySnapshot(animatingDifferences: Bool = true) {
     var snapshot = Snapshot()
-    // add the section to the snapshot.
-    // the only section type you currently have defined for your application
-    snapshot.appendSections([.main])
-    snapshot.appendItems(videoList)
+//     add the section to the snapshot.
+//     the only section type you currently have defined for your application
+    // Append the sections array to the snapshot
+    // loop over each section and add its items(videos)to the snapshot
+    snapshot.appendSections(sections)
+    sections.forEach { section in
+      snapshot.appendItems(section.videos, toSection: section)
+    }
     
     dataSource.apply(snapshot, animatingDifferences: animatingDifferences)
   }
@@ -132,22 +157,32 @@ extension VideosViewController {
 // MARK: - UISearchResultsUpdating Delegate
 extension VideosViewController: UISearchResultsUpdating {
   func updateSearchResults(for searchController: UISearchController) {
-    videoList = filteredVideos(for: searchController.searchBar.text)
+    sections = filteredSections(for: searchController.searchBar.text)
     applySnapshot()
   }
   
-  func filteredVideos(for queryOrNil: String?) -> [Video] {
-    let videos = Video.allVideos
+  func filteredSections(for queryOrNil: String?) -> [Section] {
+    let sections = Section.allSections
+
     guard
       let query = queryOrNil,
       !query.isEmpty
       else {
-        return videos
+        return sections
     }
-    return videos.filter {
-      return $0.title.lowercased().contains(query.lowercased())
+      
+    return sections.filter { section in
+      var matches = section.title.lowercased().contains(query.lowercased())
+      for video in section.videos {
+        if video.title.lowercased().contains(query.lowercased()) {
+          matches = true
+          break
+        }
+      }
+      return matches
     }
   }
+
   
   func configureSearchController() {
     searchController.searchResultsUpdater = self
@@ -161,6 +196,10 @@ extension VideosViewController: UISearchResultsUpdating {
 // MARK: - Layout Handling
 extension VideosViewController {
   private func configureLayout() {
+    collectionView.register(SectionHeaderReusableView.self,
+                            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+                            withReuseIdentifier: SectionHeaderReusableView.reuseIdentifier)
+    
     collectionView.collectionViewLayout = UICollectionViewCompositionalLayout(sectionProvider: { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
       let isPhone = layoutEnvironment.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiom.phone
       let size = NSCollectionLayoutSize(
@@ -173,6 +212,15 @@ extension VideosViewController {
       let section = NSCollectionLayoutSection(group: group)
       section.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
       section.interGroupSpacing = 10
+      
+      // Supplemnetary header view setup
+      let headerFooterSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
+                                                    heightDimension: .estimated(20))
+      let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
+        layoutSize: headerFooterSize,
+        elementKind: UICollectionView.elementKindSectionHeader,
+        alignment: .top)
+      section.boundarySupplementaryItems = [sectionHeader]
       return section
     })
   }
