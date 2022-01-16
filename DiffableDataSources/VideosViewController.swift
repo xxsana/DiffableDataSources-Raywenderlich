@@ -36,9 +36,9 @@ class VideosViewController: UICollectionViewController {
   private lazy var dataSource = makeDataSource()
   private var videoList = Video.allVideos
   
-  enum Section {
-    case main
-  }
+//  enum Section {
+//    case main
+//  }
   typealias DataSource = UICollectionViewDiffableDataSource<Section, Video>
   typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Video>
   
@@ -133,7 +133,7 @@ extension VideosViewController {
 extension VideosViewController: UISearchResultsUpdating {
   func updateSearchResults(for searchController: UISearchController) {
     videoList = filteredVideos(for: searchController.searchBar.text)
-    collectionView.reloadData()
+    applySnapshot()
   }
   
   func filteredVideos(for queryOrNil: String?) -> [Video] {
