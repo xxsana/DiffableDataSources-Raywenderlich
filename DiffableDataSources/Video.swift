@@ -28,7 +28,8 @@
 
 import UIKit
 
-class Video {
+class Video: Hashable {
+ 
   var id = UUID()
   var title: String
   var thumbnail: UIImage?
@@ -41,6 +42,18 @@ class Video {
     self.lessonCount = lessonCount
     self.link = link
   }
+  
+  // Implemented hash(into:) which hashes the given components
+  func hash(into hasher: inout Hasher) {
+    // Add the id of Video to the hash. yo only need the ID to know whether two videos are equal
+    hasher.combine(id)
+  }
+  
+  // Equatable protocol's == function, because all Hashable objects must also be Equatable
+  static func == (lhs: Video, rhs: Video) -> Bool {
+    lhs.id == rhs.id
+  }
+  
 }
 
 // MARK: - Video Sample Data

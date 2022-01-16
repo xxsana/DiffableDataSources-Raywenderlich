@@ -31,7 +31,17 @@ import SafariServices
 
 class VideosViewController: UICollectionViewController {
   // MARK: - Properties
+  // must mark it lazy because Swift requires VideosVC to complete initialization
+  // before you can call makeDataSource()
+  private lazy var dataSource = makeDataSource()
   private var videoList = Video.allVideos
+  
+  enum Section {
+    case main
+  }
+  typealias DataSource = UICollectionViewDiffableDataSource<Section, Video>
+  typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Video>
+  
   private var searchController = UISearchController(searchResultsController: nil)
   
   // MARK: - Value Types
@@ -42,32 +52,59 @@ class VideosViewController: UICollectionViewController {
     view.backgroundColor = .white
     configureSearchController()
     configureLayout()
+    applySnapshot(animatingDifferences: false)
   }
   
   // MARK: - Functions
-}
-
-// MARK: - UICollectionViewDataSource
-extension VideosViewController {
-  override func collectionView(
-    _ collectionView: UICollectionView,
-    numberOfItemsInSection section: Int
-  ) -> Int {
-    return videoList.count
+  func makeDataSource() -> DataSource {
+    // Create a data source, passing in collection view and a cell provider callback.
+    let dataSource = DataSource(
+      collectionView: collectionView) { (collectionView, indexPath, video) ->
+      UICollectionViewCell? in
+      
+      // Return a VideoCollectionViewCell
+      // Same as usual data source's 'cellForItemAt:'
+      let cell = collectionView.dequeueReusableCell(
+        withReuseIdentifier: "VideoCollectionViewCell", for: indexPath) as? VideoCollectionViewCell
+      cell?.video = video
+      return cell
+    }
+    return dataSource
   }
   
-  override func collectionView(
-    _ collectionView: UICollectionView,
-    cellForItemAt indexPath: IndexPath
-  ) -> UICollectionViewCell {
-    let video = videoList[indexPath.row]
-    guard let cell = collectionView.dequeueReusableCell(
-      withReuseIdentifier: "VideoCollectionViewCell",
-      for: indexPath) as? VideoCollectionViewCell else { fatalError() }
-    cell.video = video
-    return cell
+  // Apply a snapshot to the datasource
+  func applySnapshot(animatingDifferences: Bool = true) {
+    var snapshot = Snapshot()
+    // add the section to the snapshot.
+    // the only section type you currently have defined for your application
+    snapshot.appendSections([.main])
+    snapshot.appendItems(videoList)
+    
+    dataSource.apply(snapshot, animatingDifferences: animatingDifferences)
   }
 }
+
+//// MARK: - UICollectionViewDataSource
+//extension VideosViewController {
+//  override func collectionView(
+//    _ collectionView: UICollectionView,
+//    numberOfItemsInSection section: Int
+//  ) -> Int {
+//    return videoList.count
+//  }
+//
+//  override func collectionView(
+//    _ collectionView: UICollectionView,
+//    cellForItemAt indexPath: IndexPath
+//  ) -> UICollectionViewCell {
+//    let video = videoList[indexPath.row]
+//    guard let cell = collectionView.dequeueReusableCell(
+//      withReuseIdentifier: "VideoCollectionViewCell",
+//      for: indexPath) as? VideoCollectionViewCell else { fatalError() }
+//    cell.video = video
+//    return cell
+//  }
+//}
 
 // MARK: - UICollectionViewDelegate
 extension VideosViewController {
@@ -75,7 +112,14 @@ extension VideosViewController {
     _ collectionView: UICollectionView,
     didSelectItemAt indexPath: IndexPath
   ) {
-    let video = videoList[indexPath.row]
+    
+//    let video = videoList[indexPath.row]
+    // Ensures the app retrives video directly from the dataSource.
+    // Important because DiffableDataSource might do work in the background
+    // that makes videoList inconsistent with the currently displayed data.
+    guard let video = dataSource.itemIdentifier(for: indexPath) else { return }
+    
+    
     guard let link = video.link else {
       print("Invalid link")
       return
